@@ -32,19 +32,19 @@ ORDER BY ParcelID;
 
 SELECT A.ParcelID,
        A.PropertyAddress,
-	   B.ParcelID,
+       B.ParcelID,
        B.PropertyAddress,
 	   ISNULL(A.PropertyAddress, B.PropertyAddress)
 FROM Nashville_Housing AS A
 	JOIN Nashville_Housing AS B ON A.ParcelID = B.ParcelID
-		AND A.[UniqueID ]<> B.[UniqueID ]
+		AND A.[UniqueID ] <> B.[UniqueID ]
 WHERE A.PropertyAddress IS NULL;
 
 UPDATE A
        SET PropertyAddress = ISNULL(A.PropertyAddress, B.PropertyAddress)
 FROM Nashville_Housing AS A
 	JOIN Nashville_Housing AS B ON A.ParcelID = B.ParcelID
-		AND A.[UniqueID ]<> B.[UniqueID ]
+		AND A.[UniqueID ] <> B.[UniqueID ]
 WHERE A.PropertyAddress IS NULL;
 
 
@@ -117,9 +117,9 @@ ORDER BY COUNT(SoldASVacant)
 
 SELECT SoldASVacant,
        CASE WHEN SoldASVacant = 'Y' THEN 'Yes'
-	        WHEN SoldASVacant = 'N' THEN 'NO'
-			ELSE SoldASVacant
-		END
+	    WHEN SoldASVacant = 'N' THEN 'NO'
+	    ELSE SoldASVacant
+       END
 FROM Nashville_Housing;	
 
 
