@@ -4,7 +4,7 @@ FROM Covid_Deaths
 WHERE continent IS NOT NULL
 ORDER BY location, date,
 
--- Select data tha we are going to be using
+-- Select data that we are going to be using
 
 
 SELECT location, 
@@ -23,22 +23,22 @@ ORDER BY location, date;
 
 SELECT location,
        date,
-	   total_cases,
-	   total_deaths,
-	   CAST(total_deaths AS float)/CAST(total_cases AS float)*100 AS Death_Percentage
+       total_cases,
+       total_deaths,
+       CAST(total_deaths AS float)/CAST(total_cases AS float)*100 AS Death_Percentage
 FROM Covid_Deaths
 WHERE location LIKE '%states%'
 ORDER BY location, date;
 
 --Looking at the total cases vs population
---Show the percentage od population got Covid
+--Show the percentage of population got Covid
 
 
 SELECT location,
        date,
-	   population,
-	   total_cases,
-	   (total_cases/population)*100 AS Percentage_Population_Infected
+       population,
+       total_cases,
+       (total_cases/population)*100 AS Percentage_Population_Infected
 FROM Covid_Deaths
 WHERE total_cases IS NOT NULL
 ORDER BY location, date;
@@ -48,22 +48,12 @@ ORDER BY location, date;
 
 SELECT location,
        population,
-	   MAX(total_cases) AS Highest_Infection_Count,
-	   MAX(total_cases/population)*100 AS Percentage_Population_infected
+       MAX(total_cases) AS Highest_Infection_Count,
+       MAX(total_cases/population)*100 AS Percentage_Population_infected
 FROM Covid_Deaths
 GROUP BY location, population
 ORDER BY Percentage_Population_infected DESC
 
-
---Showing Countries with Highest Death Count per Population
-
-
-SELECT location,
-       MAX(CAST(total_deaths AS int)) AS Total_Death_Count
-FROM Covid_Deaths
-WHERE continent IS NOT NULL
-GROUP BY location
-ORDER BY Total_Death_Count DESC;
 
 
 --Let's break things down by continent
@@ -83,7 +73,7 @@ ORDER BY Total_Death_Count DESC;
 
 SELECT SUM(new_cases) AS Total_Cases,
        SUM(new_deaths) AS Total_Deaths,
-	   SUM(new_deaths)/SUM(new_cases)*100 AS Death_Percentage
+       SUM(new_deaths)/SUM(new_cases)*100 AS Death_Percentage
 FROM Covid_Deaths
 WHERE continent IS NOT NULL
 ORDER BY Total_Cases, Total_Deaths;
@@ -94,10 +84,10 @@ ORDER BY Total_Cases, Total_Deaths;
 
 SELECT DEA.continent,
        DEA.location,
-	   DEA.date,
-	   DEA.population,
-	   VAC.new_vaccinations,
-	   SUM(CONVERT(numeric,VAC.new_vaccinations)) OVER (PARTITION BY DEA.location ORDER BY DEA.location, DEA.date) AS Rolling_People_Vaccinated
+       DEA.date,
+       DEA.population,
+       VAC.new_vaccinations,
+       SUM(CONVERT(numeric,VAC.new_vaccinations)) OVER (PARTITION BY DEA.location ORDER BY DEA.location, DEA.date) AS Rolling_People_Vaccinated
 FROM Covid_Deaths AS DEA
 	JOIN Covid_Vaccinations AS VAC ON DEA.location = VAC.location
 		AND DEA.date = VAC.date
@@ -110,10 +100,10 @@ ORDER BY location, date;
 WITH Pop_vs_Vac AS (
 SELECT DEA.continent,
        DEA.location,
-	   DEA.date,
-	   DEA.population,
-	   VAC.new_vaccinations,
-	   SUM(CONVERT(numeric,VAC.new_vaccinations)) OVER (PARTITION BY DEA.location ORDER BY DEA.location, DEA.date) AS Rolling_People_Vaccinated
+       DEA.date,
+       DEA.population,
+       VAC.new_vaccinations,
+       SUM(CONVERT(numeric,VAC.new_vaccinations)) OVER (PARTITION BY DEA.location ORDER BY DEA.location, DEA.date) AS Rolling_People_Vaccinated
 FROM Covid_Deaths AS DEA
 	JOIN Covid_Vaccinations AS VAC ON DEA.location = VAC.location
 		AND DEA.date = VAC.date
@@ -121,7 +111,7 @@ WHERE DEA.continent IS NOT NULL
 )
 SELECT *, 
        (Rolling_People_Vaccinated/population)*100
-FROM Pop_vs_Vac 
+FROM Pop_vs_Vac; 
 
 
 -- Temp Table
@@ -140,10 +130,10 @@ CREATE TABLE #Percent_Population_Vaccinated (
 INSERT INTO #Percent_Population_Vaccinated
 SELECT DEA.continent,
        DEA.location,
-	   DEA.date,
-	   DEA.population,
-	   VAC.new_vaccinations,
-	   SUM(CONVERT(numeric,VAC.new_vaccinations)) OVER (PARTITION BY DEA.location ORDER BY DEA.location, DEA.date) AS Rolling_People_Vaccinated
+       DEA.date,
+       DEA.population,
+       VAC.new_vaccinations,
+       SUM(CONVERT(numeric,VAC.new_vaccinations)) OVER (PARTITION BY DEA.location ORDER BY DEA.location, DEA.date) AS Rolling_People_Vaccinated
 FROM Covid_Deaths AS DEA
 	JOIN Covid_Vaccinations AS VAC ON DEA.location = VAC.location
 		AND DEA.date = VAC.date
@@ -159,10 +149,10 @@ FROM #Percent_Population_Vaccinated
 CREATE VIEW Percent_Population_Vaccinated AS
 SELECT DEA.continent,
        DEA.location,
-	   DEA.date,
-	   DEA.population,
-	   VAC.new_vaccinations,
-	   SUM(CONVERT(numeric,VAC.new_vaccinations)) OVER (PARTITION BY DEA.location ORDER BY DEA.location, DEA.date) AS Rolling_People_Vaccinated
+       DEA.date,
+       DEA.population,
+       VAC.new_vaccinations,
+       SUM(CONVERT(numeric,VAC.new_vaccinations)) OVER (PARTITION BY DEA.location ORDER BY DEA.location, DEA.date) AS Rolling_People_Vaccinated
 FROM Covid_Deaths AS DEA
 	JOIN Covid_Vaccinations AS VAC ON DEA.location = VAC.location
 		AND DEA.date = VAC.date
